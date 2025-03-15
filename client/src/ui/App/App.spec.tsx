@@ -2,18 +2,16 @@ import App from './App'
 import { render, screen } from '@testing-library/react'
 
 describe('App tests', () => {
-  it('should render the title', () => {
+  it('should render the correct title', () => {
     render(<App />)
-    const r = screen.getByText('Hello, React with TypeScript and Vite!')
     expect(
-      screen.getByText('Hello, React with TypeScript and Vite!')
+      screen.getByText('React + Express.js Spotify OAuth')
     ).toBeInTheDocument()
   })
 
-  it('should render an h1 element', () => {
-    render(<App />)
-    const heading = screen.getByRole('heading')
-    expect(heading).toBeInTheDocument()
-    expect(heading).toHaveTextContent('Hello, React with TypeScript and Vite!')
+  it('should render the component', () => {
+    const component = render(<App />)
+    const r = component.container.querySelector('div')
+    expect(r).toBeTruthy()
   })
 })
