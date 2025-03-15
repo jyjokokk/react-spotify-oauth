@@ -1,0 +1,4 @@
+{
+  "eslint.useFlatConfig": true,
+  "eslint.runtime": "client/node_modules/eslint/bin/eslint",
+}
