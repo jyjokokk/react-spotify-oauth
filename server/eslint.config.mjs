@@ -23,7 +23,7 @@ export default tseslint.config(
   {
     extends: [
       tseslint.configs.recommended,
-      // tseslint.configs.strict,
+      tseslint.configs.strict,
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked
@@ -37,7 +37,8 @@ export default tseslint.config(
     },
     ignores: [
       'dist',
-      'node_modules/*',
+      'node_modules',
+      'node_modules/**/*',
       'vitest.setup.ts',
       '**.spec.ts',
       '**.test.ts',
@@ -49,12 +50,13 @@ export default tseslint.config(
       'typescript-eslint': tseslint
     },
     rules: {
-      'prettier/prettier': 'error',
+      'prettier/prettier': ['warn', {}, { usePrettierrc: true }],
       'import/no-unresolved': 'error',
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/consistent-type-definitions': 'off'
+      '@typescript-eslint/consistent-type-definitions': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off'
     },
     settings: {
       'import/resolver': {
