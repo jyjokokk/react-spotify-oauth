@@ -16,8 +16,10 @@ export class DatabaseService {
     private readonly encryption = encryptionUtil,
     private readonly config = Config
   ) {
-    // TODO: Read filennames from config
-    this.loadFromFile('users')
+    const { database } = this.config
+    for (const collection of database.collections) {
+      this.loadFromFile(collection)
+    }
   }
 
   private getFilePath(collection: string): string {

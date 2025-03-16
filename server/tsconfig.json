@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -16,5 +16,5 @@
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   },
-  "include": ["src", "eslint.config.mjs"]
+  "include": ["src", "eslint.config.mjs", "../config.ts"]
 }
