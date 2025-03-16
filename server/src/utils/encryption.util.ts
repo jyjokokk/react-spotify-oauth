@@ -4,13 +4,10 @@ import Config from '../config/config.service'
 const { ENCRYPTION_KEY } = Config
 const IV = crypto.randomBytes(16)
 
-export function encrypt(
-  text: string,
-  encryptionKey = Config.ENCRYPTION_KEY
-): string {
+export function encrypt(text: string): string {
   const cipher = crypto.createCipheriv(
     'aes-256-cbc',
-    Buffer.from(encryptionKey),
+    Buffer.from(ENCRYPTION_KEY),
     IV
   )
   const encrypted = cipher.update(text)
