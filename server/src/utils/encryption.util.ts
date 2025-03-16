@@ -1,21 +1,27 @@
 import crypto from 'crypto'
-import Config from 'src/config/config.service'
+import Config from '../config/config.service'
 
-const ENCRYPTION_KEY = Config.ENCRYPTION_KEY
+const { ENCRYPTION_KEY } = Config
 const IV = crypto.randomBytes(16)
 
-export function encrypt(text: string): string {
+export function encrypt(
+  text: string,
+  encryptionKey = Config.ENCRYPTION_KEY
+): string {
   const cipher = crypto.createCipheriv(
     'aes-256-cbc',
-    Buffer.from(ENCRYPTION_KEY),
+    Buffer.from(encryptionKey),
     IV
   )
   const encrypted = cipher.update(text)
   const encryptedConcated = Buffer.concat([encrypted, cipher.final()])
-  return encryptedConcated.toString('hex')
+  return IV.toString('hex') + ':' + encryptedConcated.toString('hex')
 }
 
-export function decrypt(text = ''): string {
+export function decrypt(text: string): string {
+  if (!text) {
+    return ''
+  }
   const textParts = text.split(':')
   const shifted = textParts.shift()
   const iv = Buffer.from(shifted!, 'hex')
