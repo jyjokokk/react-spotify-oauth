@@ -6,21 +6,28 @@ import {
   DBEntityResult
 } from '../../domain/interfaces/db-entity.type'
 import { v4 as uuidv4 } from 'uuid'
-import { encrypt, decrypt } from 'src/utils/encryption.util'
+import encryptionUtil from 'src/utils/encryption.util'
 import { JSONObject } from '../../domain/types/json-object.type'
 
-class DatabaseService {
-  constructor(private data: Record<string, Identifiable[]> = {}) {
+export class DatabaseService {
+  private data: Record<string, Identifiable[]> = {}
+
+  constructor(
+    private readonly encryption = encryptionUtil,
+    private readonly config = Config
+  ) {
     // TODO: Read filennames from config
     this.loadFromFile('users')
   }
 
   private getFilePath(collection: string): string {
+    const { DB_FILE_DIR } = this.config
     const root = process.cwd()
-    return join(root, Config.DB_FILE_DIR, `${collection}.json`)
+    return join(root, DB_FILE_DIR, `${collection}.json`)
   }
 
   private loadFromFile(collection: string): void {
+    const { decrypt } = this.encryption
     const filePath = this.getFilePath(collection)
     if (existsSync(filePath)) {
       const encryptedData = readFileSync(filePath, 'utf8')
@@ -33,6 +40,7 @@ class DatabaseService {
   }
 
   private saveToFile(collection: string): void {
+    const { encrypt } = this.encryption
     const filePath = this.getFilePath(collection)
     const data = JSON.stringify(this.data[collection])
     const encryptedData = encrypt(data)
@@ -46,12 +54,9 @@ class DatabaseService {
     return result
   }
 
-  public getById(collection: string, id: string) {
-    const entity = this.data[collection].find(
-      (item: Identifiable) => item.id === id
-    )
+  public getById(collection: string, id: string): DBEntityResult {
+    const entity = this.data[collection].find((item) => item.id === id)
     if (!entity) return null
-
     return entity
   }
 
@@ -87,7 +92,7 @@ class DatabaseService {
     const index = this.data[collection].findIndex(
       (item: Identifiable) => item.id === id
     )
-    if (index === -1) return false
+    if (index < 0) return false
 
     this.data[collection].splice(index, 1)
     this.saveToFile(collection)
@@ -95,6 +100,6 @@ class DatabaseService {
   }
 }
 
-const JSONDatabaseClient = new DatabaseService()
+const JSONDatabaseClient = new DatabaseService(encryptionUtil, Config)
 
 export default JSONDatabaseClient
