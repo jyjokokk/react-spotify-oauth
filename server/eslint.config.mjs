@@ -1,22 +1,9 @@
-import js from '@eslint/js'
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import pluginJs from '@eslint/js'
+import tseslint from 'typescript-eslint'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import typescriptEslintParser from '@typescript-eslint/parser'
+import eslintImportPlugin from 'eslint-plugin-import'
 
-// /** @type {import('eslint').Linter.Config} */
-// export default [
-//   {
-//     files: ["**/*.{js,mjs,cjs,ts}"],
-//     languageOptions: { globals: globals.browser },
-//     ...pluginJs.configs.recommended,
-//     ...tseslint.config({
-//       parserOptions: {
-//         project: "./tsconfig.json", // Adjust the path to your tsconfig.json if necessary
-//       },
-//     }),
-//   },
-// ];
 export default tseslint.config(
   {
     ignores: [
@@ -24,31 +11,57 @@ export default tseslint.config(
       'node_modules/*',
       'vitest.setup.ts',
       '**.spec.ts',
-      '**.test.ts'
+      '**.test.ts',
+      'eslint.config.mjs',
+      'jest.config.js'
     ]
   },
+  eslintImportPlugin.flatConfigs.recommended,
+  eslintImportPlugin.flatConfigs.typescript,
+  eslintPluginPrettierRecommended,
 
   {
     extends: [
-      js.configs.recommended,
       tseslint.configs.recommended,
-      tseslint.configs.strict,
+      // tseslint.configs.strict,
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.strictTypeChecked,
-      ...tseslint.configs.stylisticTypeChecked,
+      ...tseslint.configs.stylisticTypeChecked
     ],
-    parser: '@typescript-eslint/parser',
-    parserOptions: {
-      project: './tsconfig.json',
-      tsconfigRootDir: import.meta.dirname
+    languageOptions: {
+      parser: typescriptEslintParser,
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: import.meta.dirname
+      }
     },
+    ignores: [
+      'dist',
+      'node_modules/*',
+      'vitest.setup.ts',
+      '**.spec.ts',
+      '**.test.ts',
+      'eslint.config.mjs',
+      'jest.config.js'
+    ],
     plugins: {
-      'js': pluginJs,
-      'typescript-eslint': tseslint,
+      js: pluginJs,
+      'typescript-eslint': tseslint
     },
     rules: {
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
+      'import/no-unresolved': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/consistent-type-definitions': 'off'
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true
+        }
+      }
     }
-  },
-  eslintPluginPrettierRecommended
+  }
 )
