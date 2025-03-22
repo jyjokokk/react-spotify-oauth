@@ -4,15 +4,12 @@ import { configService } from '../../config/config.service'
 import {
   Identifiable,
   DBEntityResult
-} from '../../domain/interfaces/db-entity.type'
+} from '../../domain/types/database-entity.types'
 import { v4 as uuidv4 } from 'uuid'
 import { JSONObject } from '../../domain/types/json-object.type'
 import { decrypt, encrypt } from '../../utils/encryption.util'
+import { DatabaseConfig } from '../../domain/types/database-service.types';
 
-interface DatabaseConfig {
-  DB_FILE_DIR: string
-  collections: string[]
-}
 
 export class DatabaseService {
   private data: Record<string, Identifiable[]> = {}

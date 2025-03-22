@@ -2,9 +2,10 @@
 import * as dotenv from 'dotenv'
 import applicationConfig from '../../config'
 import { JSONValue } from '../domain/types/json-object.type'
-
-type IDotEnv = typeof dotenv
-type AppConfig = typeof applicationConfig
+import type {
+  IDotEnv,
+  AppConfig
+} from '../domain/types/config-service.types'
 
 export class ConfigService {
   private static instance: ConfigService
