@@ -1,18 +1,36 @@
-import { config } from 'dotenv'
+import * as dotenv from 'dotenv'
 import applicationConfig from '../../config'
 
-const PORT: string = process.env.PORT || '3001'
-const DB_FILE_DIR = process.env.DB_FILE_DIR || 'db'
-const ENCRYPTION_KEY: string =
-  process.env.ENCRYPTION_KEY || '12345678901234567890123456789012'
+type IDotEnv = typeof dotenv
+type AppConfig = typeof applicationConfig
 
-config()
+export class ConfigService {
+  private static instance: ConfigService
+  private readonly config: Record<string, any>
+  
+  private constructor(
+    private readonly dotenv: IDotEnv,
+    private readonly appConfig: AppConfig
+  ) { 
+    this.config = dotenv.config()
+  }  
+ 
+  public static getInstance(): ConfigService {
+    if (!ConfigService.instance) {
+      ConfigService.instance = new ConfigService(dotenv, applicationConfig)
+    }
+    return ConfigService.instance
+  }
+  
+  public get(key: string): any {
+    return this.config[key]
+  }
+  
+  public getConfig() {
+    return this.config
+  }   
+}
 
-const Config = {
-  ...process.env,
-  ...applicationConfig,
-  PORT: parseInt(PORT, 10),
-  DB_FILE_DIR,
-  ENCRYPTION_KEY
-} as const
-export default Config
+export const configService = ConfigService.getInstance()
+export const Config = configService.getConfig()
+
