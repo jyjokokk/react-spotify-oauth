@@ -6,6 +6,8 @@ const DB_FILE_DIR = process.env.DB_FILE_DIR || 'db'
 const ENCRYPTION_KEY: string =
   process.env.ENCRYPTION_KEY || '12345678901234567890123456789012'
 
+config()
+
 const Config = {
   ...process.env,
   ...applicationConfig,
