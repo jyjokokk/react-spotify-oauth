@@ -1,7 +1,13 @@
 import { encrypt, decrypt } from './encryption.util'
 
 jest.mock('../config/config.service', () => ({
-  ENCRYPTION_KEY: '12345678901234567890123456789012'
+  configService: {
+    get(key) {
+      if (key === 'ENCRYPTION_KEY') {
+        return '12345678901234567890123456789012'
+      }
+    }
+  }
 }))
 
 describe('encrypt', () => {
@@ -19,7 +25,6 @@ describe('decrypt', () => {
     const text = 'Hello, World!'
     const encryptedText = encrypt(text)
     const decryptedText = decrypt(encryptedText)
-    console.log(decryptedText)
     expect(decryptedText).toBe(text)
   })
 

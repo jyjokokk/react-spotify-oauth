@@ -1,7 +1,7 @@
 import crypto from 'crypto'
-import Config from '../config/config.service'
+import { configService } from '../config/config.service'
 
-const { ENCRYPTION_KEY } = Config
+const ENCRYPTION_KEY = configService.get('ENCRYPTION_KEY') as string
 const IV = crypto.randomBytes(16)
 
 export function encrypt(text: string): string {
@@ -32,5 +32,3 @@ export function decrypt(text: string): string {
   const decrypted = Buffer.concat([deciphered, decipher.final()])
   return decrypted.toString()
 }
-
-export default { encrypt, decrypt }

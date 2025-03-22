@@ -1,35 +1,38 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import Config from 'src/config/config.service'
+import { configService } from '../../config/config.service'
 import {
   Identifiable,
   DBEntityResult
 } from '../../domain/interfaces/db-entity.type'
 import { v4 as uuidv4 } from 'uuid'
-import encryptionUtil from 'src/utils/encryption.util'
 import { JSONObject } from '../../domain/types/json-object.type'
+import { decrypt, encrypt } from '../../utils/encryption.util'
+
+interface DatabaseConfig {
+  DB_FILE_DIR: string
+  collections: string[]
+}
 
 export class DatabaseService {
   private data: Record<string, Identifiable[]> = {}
 
-  constructor(
-    private readonly encryption = encryptionUtil,
-    private readonly config = Config
-  ) {
-    const { database } = this.config
-    for (const collection of database.collections) {
-      this.loadFromFile(collection)
+  constructor() {
+    const database = configService.get('database') as DatabaseConfig
+    if (Array.isArray(database.collections)) {
+      for (const collection of database.collections) {
+        this.loadFromFile(collection)
+      }
     }
   }
 
   private getFilePath(collection: string): string {
-    const { DB_FILE_DIR } = this.config
+    const DB_FILE_DIR = configService.get('DB_FILE_DIR') as string
     const root = process.cwd()
-    return join(root, DB_FILE_DIR, `${collection}.json`)
+    return join(root, DB_FILE_DIR, `${collection}.enc`)
   }
 
   private loadFromFile(collection: string): void {
-    const { decrypt } = this.encryption
     const filePath = this.getFilePath(collection)
     if (existsSync(filePath)) {
       const encryptedData = readFileSync(filePath, 'utf8')
@@ -42,7 +45,6 @@ export class DatabaseService {
   }
 
   private saveToFile(collection: string): void {
-    const { encrypt } = this.encryption
     const filePath = this.getFilePath(collection)
     const data = JSON.stringify(this.data[collection])
     const encryptedData = encrypt(data)
@@ -102,6 +104,4 @@ export class DatabaseService {
   }
 }
 
-const JSONDatabaseClient = new DatabaseService(encryptionUtil, Config)
-
-export default JSONDatabaseClient
+export default new DatabaseService()
