@@ -62,7 +62,8 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-definitions': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unnecessary-type-parameters': 'warn',
-      'jest/no-disabled-tests': 'warn'
+      'jest/no-disabled-tests': 'warn',
+      '@typescript-eslint/no-unnecessary-condition': 'warn'
     },
     settings: {
       'import/resolver': {
