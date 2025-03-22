@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import typescriptEslintParser from '@typescript-eslint/parser'
 import eslintImportPlugin from 'eslint-plugin-import'
+import eslintJestPlugin from 'eslint-plugin-jest'
 
 export default tseslint.config(
   {
@@ -13,7 +14,8 @@ export default tseslint.config(
       '**.spec.ts',
       '**.test.ts',
       'eslint.config.mjs',
-      'jest.config.js'
+      'jest.config.js',
+      'coverage/*'
     ]
   },
   eslintImportPlugin.flatConfigs.recommended,
@@ -33,7 +35,8 @@ export default tseslint.config(
       parserOptions: {
         project: ['./tsconfig.json'],
         tsconfigRootDir: import.meta.dirname
-      }
+      },
+      globals: eslintJestPlugin.environments.globals.globals
     },
     ignores: [
       'dist',
@@ -46,6 +49,7 @@ export default tseslint.config(
       'jest.config.js'
     ],
     plugins: {
+      jest: eslintJestPlugin,
       js: pluginJs,
       'typescript-eslint': tseslint
     },
@@ -57,8 +61,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/consistent-type-definitions': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      "@typescript-eslint/no-unnecessary-type-parameters": "warn"
-
+      '@typescript-eslint/no-unnecessary-type-parameters': 'warn',
+      'jest/no-disabled-tests': 'warn'
     },
     settings: {
       'import/resolver': {
