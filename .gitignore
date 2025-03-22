@@ -146,3 +146,6 @@ dist
 **/__snapshots__/
 db-files
 .yarn
+
+*.enc
+*.DS_Store
