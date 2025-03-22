@@ -2,11 +2,9 @@
 import * as dotenv from 'dotenv'
 import applicationConfig from '../../config'
 import { JSONValue } from '../domain/types/json-object.type'
-import type {
-  IDotEnv,
-  AppConfig
-} from '../domain/types/config-service.types'
+import type { IDotEnv, AppConfig } from '../domain/types/config-service.types'
 
+// TODO: Implement env transformation and config validation
 export class ConfigService {
   private static instance: ConfigService
   private readonly config: Record<string, JSONValue>

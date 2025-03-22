@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 import { configService } from '../config/config.service'
 
 const ENCRYPTION_KEY = configService.get('ENCRYPTION_KEY') as string
