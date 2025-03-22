@@ -9,12 +9,13 @@ async function dbOps() {
   await JSONDatabaseClient.init()
 
   const users = JSONDatabaseClient.getAll('users')
-  const user = JSONDatabaseClient.getById(
-    'users',
-    '99847044-3a9e-42de-90ae-cc7dcbae406e'
-  )
   console.log(users)
-  console.log(user)
+
+  // const user = JSONDatabaseClient.getById(
+  //   'users',
+  //   '99847044-3a9e-42de-90ae-cc7dcbae406e'
+  // )
+  // console.log(user)
 }
 
 dbOps()

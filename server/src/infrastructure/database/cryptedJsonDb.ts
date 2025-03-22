@@ -84,11 +84,11 @@ export class DatabaseService {
     return itemEntities
   }
 
-  public update<T extends DBEntity>(
+  public async update<T extends DBEntity>(
     collection: string,
     id: string,
     item: Partial<T>
-  ): T | null {
+  ): Promise<T | null> {
     const index = this.data[collection].findIndex(
       (item: Identifiable) => item.id === id
     )
@@ -96,18 +96,18 @@ export class DatabaseService {
 
     const updatedItem = { ...this.data[collection][index], ...item }
     this.data[collection][index] = updatedItem
-    this.saveToFile(collection)
+    await this.saveToFile(collection)
     return this.data[collection][index] as T
   }
 
-  public delete(collection: string, id: string): boolean {
+  public async delete(collection: string, id: string): Promise<boolean> {
     const index = this.data[collection].findIndex(
       (item: Identifiable) => item.id === id
     )
     if (index < 0) return false
 
     this.data[collection].splice(index, 1)
-    this.saveToFile(collection)
+    await this.saveToFile(collection)
     return true
   }
 }
