@@ -33,7 +33,7 @@ export class ConfigService {
     return ConfigService.instance
   }
 
-  public get(key: string): unknown {
+  public get(key: keyof typeof this.config): unknown {
     return this.config[key]
   }
 

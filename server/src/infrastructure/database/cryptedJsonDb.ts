@@ -1,55 +1,62 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { configService } from '../../config/config.service'
+import { type ConfigService, configService } from '../../config/config.service'
 import {
   Identifiable,
-  DBEntityResult
+  DBEntityResult,
+  DBEntity
 } from '../../domain/types/database-entity.types'
 import { v4 as uuidv4 } from 'uuid'
 import { JSONObject } from '../../domain/types/json-object.type'
 import { decrypt, encrypt } from '../../utils/encryption.util'
-import { DatabaseConfig } from '../../domain/types/database-service.types';
-
+import { DatabaseConfig } from '../../domain/types/database-service.types'
+import {
+  fileOrDirExists,
+  readFromFile,
+  writeToFile
+} from '../../utils/file-handler.util'
 
 export class DatabaseService {
   private data: Record<string, Identifiable[]> = {}
 
-  constructor() {
-    const database = configService.get('database') as DatabaseConfig
+  constructor(private readonly configService: ConfigService) {}
+
+  async init(): Promise<void> {
+    const database = this.configService.get('database') as DatabaseConfig
     if (Array.isArray(database.collections)) {
       for (const collection of database.collections) {
-        this.loadFromFile(collection)
+        await this.loadFromFile(collection)
       }
     }
   }
 
   private getFilePath(collection: string): string {
-    const DB_FILE_DIR = configService.get('DB_FILE_DIR') as string
+    const DB_FILE_DIR = this.configService.get('DB_FILE_DIR') as string
     const root = process.cwd()
     return join(root, DB_FILE_DIR, `${collection}.enc`)
   }
 
-  private loadFromFile(collection: string): void {
+  private async loadFromFile(collection: string): Promise<void> {
     const filePath = this.getFilePath(collection)
-    if (existsSync(filePath)) {
-      const encryptedData = readFileSync(filePath, 'utf8')
+    if (await fileOrDirExists(filePath)) {
+      const encryptedData = await readFromFile(filePath)
       const decryptedData = decrypt(encryptedData)
-      this.data[collection] = JSON.parse(decryptedData) as Identifiable[] &
+      this.data[collection] = JSON.parse(decryptedData) as DBEntity[] &
         JSONObject
       return
     }
     this.data[collection] = []
+    await this.saveToFile(collection)
   }
 
-  private saveToFile(collection: string): void {
+  private async saveToFile(collection: string): Promise<void> {
     const filePath = this.getFilePath(collection)
     const data = JSON.stringify(this.data[collection])
     const encryptedData = encrypt(data)
-    writeFileSync(filePath, encryptedData, 'utf-8')
+    await writeToFile(filePath, encryptedData)
   }
 
-  public getAll<T>(collection: string): (T | Identifiable)[] {
-    const result = this.data[collection]
+  public getAll<T>(collection: string): T[] {
+    const result = this.data[collection] as T[]
     if (result.length === 0) return []
 
     return result
@@ -61,23 +68,27 @@ export class DatabaseService {
     return entity
   }
 
-  public create<T>(
-    collection: string,
-    ...items: T[]
-  ): (Identifiable & T)[] | (Identifiable & T) {
+  public async create<T>(collection: string, ...items: T[]): Promise<T | T[]> {
     if (!items.length) return []
-    const identifiableItems = items.map((item) => ({ ...item, id: uuidv4() }))
-    this.data[collection].push(...identifiableItems)
-    this.saveToFile(collection)
-    if (identifiableItems.length === 1) return identifiableItems[0]
-    return identifiableItems
+    const itemEntities = items.map((item) => ({
+      ...item,
+      id: uuidv4(),
+      createdAt: new Date()
+    }))
+    if (!this.data[collection]) {
+      this.data[collection] = []
+    }
+    this.data[collection].push(...itemEntities)
+    await this.saveToFile(collection)
+    if (itemEntities.length === 1) return itemEntities[0]
+    return itemEntities
   }
 
-  public update(
+  public update<T extends DBEntity>(
     collection: string,
     id: string,
-    item: Identifiable
-  ): DBEntityResult {
+    item: Partial<T>
+  ): T | null {
     const index = this.data[collection].findIndex(
       (item: Identifiable) => item.id === id
     )
@@ -86,7 +97,7 @@ export class DatabaseService {
     const updatedItem = { ...this.data[collection][index], ...item }
     this.data[collection][index] = updatedItem
     this.saveToFile(collection)
-    return updatedItem
+    return this.data[collection][index] as T
   }
 
   public delete(collection: string, id: string): boolean {
@@ -101,4 +112,4 @@ export class DatabaseService {
   }
 }
 
-export default new DatabaseService()
+export default new DatabaseService(configService)

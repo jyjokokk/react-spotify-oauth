@@ -1,10 +1,14 @@
 import { encrypt, decrypt } from './encryption.util'
 
+function makeKeyOfLength(length: number): string {
+  return 'a'.repeat(length)
+}
+
 jest.mock('../config/config.service', () => ({
   configService: {
     get(key) {
       if (key === 'ENCRYPTION_KEY') {
-        return '12345678901234567890123456789012'
+        return makeKeyOfLength(32)
       }
     }
   }
