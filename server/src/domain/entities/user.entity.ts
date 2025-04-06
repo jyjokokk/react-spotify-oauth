@@ -1,1 +1,5 @@
-// TODO: implement the User entity
+export interface User {
+  id: string
+  email: string
+  password: string
+}

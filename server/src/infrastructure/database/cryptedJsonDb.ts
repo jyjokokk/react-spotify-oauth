@@ -15,7 +15,7 @@ import {
   writeToFile
 } from '../../utils/file-handler.util'
 
-export class DatabaseService {
+export class JSONDatabaseService {
   private data: Record<string, Identifiable[]> = {}
 
   constructor(private readonly configService: ConfigService) {}
@@ -75,6 +75,7 @@ export class DatabaseService {
       id: uuidv4(),
       createdAt: new Date()
     }))
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!this.data[collection]) {
       this.data[collection] = []
     }
@@ -112,4 +113,4 @@ export class DatabaseService {
   }
 }
 
-export default new DatabaseService(configService)
+export default new JSONDatabaseService(configService)
