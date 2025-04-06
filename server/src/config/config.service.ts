@@ -43,4 +43,3 @@ export class ConfigService {
 }
 
 export const configService = ConfigService.getInstance()
-export const Config = configService.getConfig()
