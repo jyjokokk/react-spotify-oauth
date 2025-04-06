@@ -4,5 +4,5 @@ export class Playlist {
   description: string
   songs: string[]
   createdAt: Date
-  updatedAt: Date
+  updatedAt?: Date
 }

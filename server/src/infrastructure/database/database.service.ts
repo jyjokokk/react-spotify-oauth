@@ -21,11 +21,23 @@ export class DatabaseService<T> {
   }
 
   async create(...items: T[]): Promise<T | T[]> {
-    return this.jsonDatabaseService.create(this.collection, ...items)
+    const withTimestamp = items.map((item) => ({
+      ...item,
+      createdAt: new Date()
+    }))
+    return this.jsonDatabaseService.create(this.collection, ...withTimestamp)
   }
 
   async update(id: string, item: Partial<T>): Promise<T | null> {
-    const r = await this.jsonDatabaseService.update(this.collection, id, item)
+    const updatedItem = {
+      ...item,
+      updatedAt: new Date()
+    }
+    const r = await this.jsonDatabaseService.update(
+      this.collection,
+      id,
+      updatedItem
+    )
     return r as T
   }
 
