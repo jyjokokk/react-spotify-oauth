@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import * as dotenv from 'dotenv'
 import applicationConfig from '../../config'
-import { JSONValue } from '../domain/types/json-object.type'
 import type { IDotEnv, AppConfig } from '../domain/types/config-service.types'
+import { ConfigSchema } from '../domain/interfaces/config-schema.dto'
+import { validateObject } from '../utils/validateObject';
 
-// TODO: Implement env transformation and config validation
 export class ConfigService {
   private static instance: ConfigService
-  private readonly config: Record<string, JSONValue>
+  private readonly config: ConfigSchema
 
   /**
    * @param dotenv This is passed as a parameter to allow for dependency injection
@@ -18,10 +18,12 @@ export class ConfigService {
     private readonly appConfig: AppConfig
   ) {
     this.dotenv.config()
-    this.config = {
+    const plainConfig = {
       ...process.env,
       ...this.appConfig
     }
+    const configClass = validateObject(plainConfig, ConfigSchema)
+    this.config = configClass
   }
 
   public static getInstance(): ConfigService {
