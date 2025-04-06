@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-wrapper-object-types */
 import { plainToClass } from 'class-transformer'
 import { validateSync } from 'class-validator'
-import { ValidatingError } from '../domain/errors/validating-errors';
+import { ValidatingError } from '../domain/errors/validating-errors'
 
 export function validateObject<T extends Object>(
   object: unknown,
