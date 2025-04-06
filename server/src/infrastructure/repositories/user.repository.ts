@@ -13,7 +13,7 @@ export class UserRepository {
     return this.databaseService.getById(id)
   }
 
-  async create(user: User): Promise<User> {
+  async create(user: Partial<User>): Promise<User> {
     const createdUser = await this.databaseService.create(user)
     return createdUser as User
   }

@@ -20,12 +20,16 @@ export class DatabaseService<T> {
     return this.jsonDatabaseService.getById(this.collection, id) as T
   }
 
-  async create(...items: T[]): Promise<T | T[]> {
+  async create(...items: Partial<T>[]): Promise<T | T[]> {
     const withTimestamp = items.map((item) => ({
       ...item,
       createdAt: new Date()
     }))
-    return this.jsonDatabaseService.create(this.collection, ...withTimestamp)
+    const r = await this.jsonDatabaseService.create(
+      this.collection,
+      ...withTimestamp
+    )
+    return r as T | T[]
   }
 
   async update(id: string, item: Partial<T>): Promise<T | null> {

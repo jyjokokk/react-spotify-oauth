@@ -15,7 +15,7 @@ export class UserRepository {
     return this.databaseService.getById(id)
   }
 
-  async create(user: Playlist): Promise<Playlist> {
+  async create(user: Partial<Playlist>): Promise<Playlist> {
     const createdUser = await this.databaseService.create(user)
     return createdUser as Playlist
   }
