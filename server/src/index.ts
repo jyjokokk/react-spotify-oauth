@@ -12,11 +12,9 @@ async function dbOps() {
   const userRepository = new UserRepository()
   const users = await userRepository.getAll()
   console.log(users)
-
   // const user = await userRepository.getById(
   //   '99847044-3a9e-42de-90ae-cc7dcbae406e'
   // )
-  // console.log('USER', user)
   return true
 }
 
@@ -29,7 +27,7 @@ dbOps()
     process.exit(1) // Exit the application if dbOps fails
   })
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('Hello World!')
 })
 
