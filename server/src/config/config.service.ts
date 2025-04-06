@@ -2,7 +2,7 @@
 import * as dotenv from 'dotenv'
 import applicationConfig from '../../config'
 import type { IDotEnv, AppConfig } from '../domain/types/config-service.types'
-import { ConfigSchema } from '../domain/interfaces/config-schema.dto'
+import { ConfigSchema } from '../domain/dto/config-schema.dto'
 import { validateObject } from '../utils/validateObject'
 
 export class ConfigService {
