@@ -1,14 +1,13 @@
 import express from 'express'
-import JSONDatabaseClient from './infrastructure/database/cryptedJsonDb'
 import { configService } from './config/config.service'
 import { UserRepository } from './infrastructure/repositories/user.repository'
+import { initApp } from './config/initApp'
 const app = express()
 
 const port = configService.get('PORT') as string
 
 async function dbOps() {
-  await JSONDatabaseClient.init()
-
+  await initApp()
   const userRepository = new UserRepository()
   const users = await userRepository.getAll()
   console.log(users)
