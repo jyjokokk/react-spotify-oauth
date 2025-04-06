@@ -29,7 +29,7 @@ export class DatabaseService<T> {
     return r as T
   }
 
-  async delete(collection: string, id: string): Promise<boolean> {
-    return this.jsonDatabaseService.delete(collection, id)
+  async delete(id: string): Promise<boolean> {
+    return this.jsonDatabaseService.delete(this.collection, id)
   }
 }
